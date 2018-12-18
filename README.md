@@ -1,1 +1,1 @@
-webpack v1.0.4 shang
+webpack v1.0.4
