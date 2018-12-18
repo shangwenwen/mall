@@ -1,0 +1,31 @@
+@import './layout.css';
+
+body {
+  background: $blue;
+  padding-left: $paddingLeft;
+}
+
+.zent-row {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+    padding: 0;
+  }
+
+  &-body {
+    padding: 20px;
+  }
+
+  &--normal {
+    .zent-card-header {
+      font-size: 16px;
+    }
+
+    .zent-card-body {
+      font-size: 14px;
+    }
+  }
+
+  zoom: 1;
+}

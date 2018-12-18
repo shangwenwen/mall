@@ -1,0 +1,5 @@
+@import './vars.css';
+
+.wrapper {
+  padding: $paddingLeft;
+}

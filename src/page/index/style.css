@@ -1,0 +1,5 @@
+@import '../common/vars.css';
+
+.index {
+  padding: $paddingLeft;
+}
