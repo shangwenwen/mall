@@ -140,7 +140,7 @@ class Carousel {
     let indicatorTpl = $(
       [
         '<ul class="carousel-indicator">',
-        function() {
+        (function() {
           let li = []
 
           $.each(options.imgSrc, function(index) {
@@ -148,7 +148,7 @@ class Carousel {
           })
 
           return li.join('')
-        }(),
+        })(),
         '</ul>'
       ].join(''))
 

@@ -9,8 +9,6 @@ import Dialog from '../common/dialog/index.js'
 
 // const images = require('../../images/01.jpg')
 
-
-
 // let util = require('helpers/common.js')
 
 // util.request({
@@ -32,5 +30,4 @@ import Dialog from '../common/dialog/index.js'
 //   ]
 // })
 
-
-var dialog = new Dialog()
+new Dialog()
