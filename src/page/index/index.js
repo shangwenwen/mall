@@ -1,34 +1,36 @@
-import Dom from '../../helpers/dom'
-import Carousel from '../common/carousel/index.js'
+// import Dom from '../../helpers/dom'
+// import Carousel from '../common/carousel/index.js'
+import Dialog from '../common/dialog/index.js'
 
-const layout = require('page/common/base.css')
-const style = require('page/index/style.css')
+// const layout = require('page/common/base.css')
+// const style = require('page/index/style.css')
 
-const imags = require('images/01.jpg')
+// const imags = require('images/01.jpg')
 
-const images = require('../../images/01.jpg')
+// const images = require('../../images/01.jpg')
 
-let dom = new Dom()
 
-console.log(dom)
 
-let util = require('helpers/common.js')
+// let util = require('helpers/common.js')
 
-util.request({
-  url: '/product/list.do?keyword=1',
-  success: function(res) {
-    console.log(res)
-  },
-  error: function(errMsg) {
-    console.log(errMsg)
-  }
-})
+// util.request({
+//   url: '/product/list.do?keyword=1',
+//   success: function(res) {
+//     console.log(res)
+//   },
+//   error: function(errMsg) {
+//     console.log(errMsg)
+//   }
+// })
 
-var carousel = new Carousel('.carousel-wrap', {
-  width: '1000px',
-  imgSrc: [
-    images,
-    images,
-    images
-  ]
-})
+// var carousel = new Carousel('.carousel-wrap', {
+//   width: '1000px',
+//   imgSrc: [
+//     images,
+//     images,
+//     images
+//   ]
+// })
+
+
+var dialog = new Dialog()

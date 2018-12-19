@@ -137,19 +137,20 @@ class Carousel {
   indicator() {
     let options = this.options
 
-    let indicatorTpl = $([
-      '<div><ul>',
-      function() {
-        let li = []
-        $.each(options.imgSrc, function(index) {
-           li.push('<li'+options.index === index? 'class="this"': ''+'></li>')
-           console.log('sang')
-        })
+    let indicatorTpl = $(
+      [
+        '<ul class="carousel-indicator">',
+        function() {
+          let li = []
 
-        return li.join('')
-      }(),
-      '</ul></div>'
-    ].join())
+          $.each(options.imgSrc, function(index) {
+            li.push('<li class="' + index + '"></li>')
+          })
+
+          return li.join('')
+        }(),
+        '</ul>'
+      ].join(''))
 
     this.selector.attr('indicator-type', options.indicator)
 
