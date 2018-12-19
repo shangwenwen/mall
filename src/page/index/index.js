@@ -1,9 +1,12 @@
 import Dom from '../../helpers/dom'
+import Carousel from '../common/carousel/index.js'
 
 const layout = require('page/common/base.css')
 const style = require('page/index/style.css')
 
 const imags = require('images/01.jpg')
+
+const images = require('../../images/01.jpg')
 
 let dom = new Dom()
 
@@ -21,9 +24,11 @@ util.request({
   }
 })
 
-const carousel = require('../common/carousel/index.js')
-
-carousel.render({
-	elem: '.carousel-demo',
-  width: '800px'
+var carousel = new Carousel('.carousel-wrap', {
+  width: '1000px',
+  imgSrc: [
+    images,
+    images,
+    images
+  ]
 })
