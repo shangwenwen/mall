@@ -1,14 +1,4 @@
-// polyfill events
-let addEvent = (element, type, handler) => {
-  if (element.addEventListener) {
-    element.addEventListener(type, handler, false)
-  } else if (element.attachEvent) {
-    element.attachEvent('on' + type, handler)
-  } else {
-    element['on' + type] = handler
-  }
-}
-
+// 轮播
 class Carousel {
   // 构造函数
   constructor(selector, userOptions = {}) {
@@ -19,7 +9,7 @@ class Carousel {
       arrow: 'hover', // 'hover/always/none'
       indicator: 'inside', // 'indicator/outside/none' 指示器位置
       autoplay: true, // true/false
-      interval: 3000, // 轮播时间
+      interval: 1000, // 轮播时间
       triggerType: 'hover', // 'hover/click' 触发指示器方式
       index: 0 // 初始索引
     }
@@ -81,19 +71,108 @@ class Carousel {
     return carouselContent
   }
 
+  // 获取上一个等待索引
+  _prevIndex() {
+    let options = this.options
+    let prevIndex = options.index - 1
+
+    if (prevIndex < 0) {
+      prevIndex = options.imgSrc.length - 1
+    }
+
+    return prevIndex
+  }
+
+  // 获取下一个等待索引
+  _nextIndex() {
+    let options = this.options
+    let nextIndex = options.index + 1
+
+    if (nextIndex > options.imgSrc.length) {
+      nextIndex = 0
+    }
+
+    return nextIndex
+  }
+
+  // 索引递增
+  _addIndex(num) {
+    let options = this.options
+    num = num || 1
+    options.index = options.index + num
+
+    if (options.index >= options.imgSrc.length) {
+      options.index = 0
+    }
+  }
+
+  // 索引递减
+  _subIndex(num) {
+    let options = this.options
+    num = num || 1
+    options.index = options.index - num
+
+    if (options.index < 0) {
+      options.index = options.imgSrc.length - 1
+    }
+  }
+
+  // 自动轮播
+  autoplay() {
+    let _this = this
+    let options = this.options
+
+    if (!options.autoplay) return
+
+    this.timer = setInterval(function() {
+      _this._slide()
+    }, options.interval)
+  }
+
+  _slide(type) {
+    console.log(type)
+  }
+
   // 指示器
   indicator() {
+    let options = this.options
 
+    let indicatorTpl = $([
+      '<div><ul>',
+      function() {
+        let li = []
+        $.each(options.imgSrc, function(index) {
+           li.push('<li'+options.index === index? 'class="this"': ''+'></li>')
+           console.log('sang')
+        })
+
+        return li.join('')
+      }(),
+      '</ul></div>'
+    ].join())
+
+    this.selector.attr('indicator-type', options.indicator)
+
+    this.selector.append(indicatorTpl)
   }
 
   // 轮播箭头
   arrow() {
+    let _this = this
+    let options = this.options
+    let arrowTpl = $([
+      '<button class="layui-icon" lay-type="sub">&gt;</button>',
+      '<button class="layui-icon" lay-type="add">&gt;</button>'
+    ].join(''))
 
-  }
+    this.selector.attr('arrow-type', options.arrow)
+    this.selector.append(arrowTpl)
 
-  // 自动播放
-  autoplay() {
-
+    arrowTpl.on('click', function() {
+      let thisElem = $(this)
+      let type = thisElem.attr('lay-type')
+      _this._slide(type)
+    })
   }
 
   // 事件绑定
