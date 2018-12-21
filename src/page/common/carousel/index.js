@@ -1,35 +1,34 @@
 // 轮播
 class Carousel {
   // 构造函数
-  constructor(selector, userOptions = {}) {
-    // 默认配置
-    this.defaultOptions = {
+  constructor(element, userOptions = {}) {
+    // 合并配置
+    this.options = $.extend({}, {
       width: '600px',
       height: '300px',
       arrow: 'hover', // 'hover/always/none'
       indicator: 'inside', // 'indicator/outside/none' 指示器位置
       autoplay: true, // true/false
-      interval: 1000, // 轮播时间
+      interval: 3000, // 轮播时间
       triggerType: 'hover', // 'hover/click' 触发指示器方式
       index: 0 // 初始索引
-    }
-    // 合并配置
-    this.options = $.extend({}, this.defaultOptions, userOptions)
+    }, userOptions)
     // 获取轮播元素
-    this.selector = $(selector)
+    this.element = $(element)
+
+    // 获取轮播项
+    this.elementItem = this.element.find('.carousel-content').children()
     // 加载轮播
     this.init()
   }
 
   init() {
     const options = this.options
-    const selector = this.selector
-
-    selector.append(this._getCarouselContent())
+    const element = this.element
 
     // 判断页面中是否有轮播元素
-    if (!selector[0]) {
-      console.log('no selector')
+    if (!element[0]) {
+      console.log('no element')
       return
     }
 
@@ -37,8 +36,8 @@ class Carousel {
     if (options.index < 0) {
       options.index = 0
     }
-    if (options.index >= options.imgSrc.length) {
-      options.index = this.options.imgSrc.length - 1
+    if (options.index >= this.elementItem.length) {
+      options.index = this.elementItem.length - 1
     }
 
     // 自动切换间隔 不得小于 800ms
@@ -52,32 +51,13 @@ class Carousel {
     this.events()
   }
 
-  // 生成 IMG DOM 元素
-  _getCarouselContent() {
-    let carouselContent = document.createElement('div')
-    $(carouselContent).attr('class', 'carousel-content')
-    let fragment = document.createDocumentFragment()
-    let imgElem = document.createElement('img')
-
-    // 遍历图片数组
-    this.options.imgSrc.forEach((img, index) => {
-      imgElem = imgElem.cloneNode(false)
-      $(imgElem).attr('src', img).attr('alt', index + 1)
-      fragment.appendChild(imgElem)
-    })
-
-    carouselContent.appendChild(fragment)
-
-    return carouselContent
-  }
-
   // 获取上一个等待索引
   _prevIndex() {
     let options = this.options
     let prevIndex = options.index - 1
 
     if (prevIndex < 0) {
-      prevIndex = options.imgSrc.length - 1
+      prevIndex = this.elementItem.length - 1
     }
 
     return prevIndex
@@ -88,7 +68,7 @@ class Carousel {
     let options = this.options
     let nextIndex = options.index + 1
 
-    if (nextIndex > options.imgSrc.length) {
+    if (nextIndex > this.elementItem.length) {
       nextIndex = 0
     }
 
@@ -101,7 +81,7 @@ class Carousel {
     num = num || 1
     options.index = options.index + num
 
-    if (options.index >= options.imgSrc.length) {
+    if (options.index >= this.elementItem.length) {
       options.index = 0
     }
   }
@@ -113,7 +93,7 @@ class Carousel {
     options.index = options.index - num
 
     if (options.index < 0) {
-      options.index = options.imgSrc.length - 1
+      options.index = this.elementItem.length - 1
     }
   }
 
@@ -129,12 +109,9 @@ class Carousel {
     }, options.interval)
   }
 
-  _slide(type) {
-    console.log(type)
-  }
-
   // 指示器
   indicator() {
+    let _this = this
     let options = this.options
 
     let indicatorTpl = $(
@@ -143,8 +120,8 @@ class Carousel {
         (function() {
           let li = []
 
-          $.each(options.imgSrc, function(index) {
-            li.push('<li class="' + index + '"></li>')
+          $.each(_this.elementItem, function(index) {
+            li.push('<li' + (options.index === index ? ' class="this"' : '') + '></li>')
           })
 
           return li.join('')
@@ -152,9 +129,14 @@ class Carousel {
         '</ul>'
       ].join(''))
 
-    this.selector.attr('indicator-type', options.indicator)
+    this.element.attr('indicator-type', options.indicator)
 
-    this.selector.append(indicatorTpl)
+    // 避免重复加载
+    if (this.element.find('.carousel-indicator')[0]) {
+      this.element.find('.carousel-indicator').remove()
+    }
+
+    this.element.append(indicatorTpl)
   }
 
   // 轮播箭头
@@ -162,12 +144,12 @@ class Carousel {
     let _this = this
     let options = this.options
     let arrowTpl = $([
-      '<button class="layui-icon" lay-type="sub">&gt;</button>',
-      '<button class="layui-icon" lay-type="add">&gt;</button>'
+      '<a class="layui-icon" lay-type="sub">&gt;</a>',
+      '<a class="layui-icon" lay-type="add">&gt;</a>'
     ].join(''))
 
-    this.selector.attr('arrow-type', options.arrow)
-    this.selector.append(arrowTpl)
+    this.element.attr('arrow-type', options.arrow)
+    this.element.append(arrowTpl)
 
     arrowTpl.on('click', function() {
       let thisElem = $(this)
@@ -176,9 +158,49 @@ class Carousel {
     })
   }
 
+  // 切换
+  _slide(type, num) {
+    let _this = this
+    let options = this.options
+    let index = options.index
+
+    if(_this.haveSlide) return;
+
+    if (type === 'sub') {
+      _this._subIndex(num)
+      _this.elementItem.eq(options.index).addClass('carousel-prev')
+
+      setTimeout(function(){
+        _this.elementItem.eq(options.index).addClass('carousel-right')
+      },50)
+    } else{
+      _this._addIndex(num)
+      _this.elementItem.eq(options.index).addClass('carousel-next')
+
+      setTimeout(function(){
+        _this.elementItem.eq(options.index).addClass('carousel-left')
+      },50)
+    }
+
+    setTimeout(function(){
+      _this.elementItem.removeClass('this carousel-prev carousel-right carousel-next carousel-left')
+      _this.elementItem.eq(options.index).addClass('this')
+      _this.haveSlide = false
+    },300)
+
+    _this.haveSlide = true
+  }
+
   // 事件绑定
   events() {
+    let _this = this
+    let options = this.options
 
+    this.element.on('mouseenter', function(){
+      clearInterval(_this.timer);
+    }).on('mouseleave', function(){
+      _this.autoplay()
+    })
   }
 }
 

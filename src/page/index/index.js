@@ -1,13 +1,13 @@
 // import Dom from '../../helpers/dom'
-// import Carousel from '../common/carousel/index.js'
-import Dialog from '../common/dialog/index.js'
+import Carousel from '../common/carousel/index.js'
+// import Dialog from '../common/dialog/index.js'
 
 // const layout = require('page/common/base.css')
 // const style = require('page/index/style.css')
 
 // const imags = require('images/01.jpg')
 
-// const images = require('../../images/01.jpg')
+const images = require('../../images/01.jpg')
 
 // let util = require('helpers/common.js')
 
@@ -21,13 +21,15 @@ import Dialog from '../common/dialog/index.js'
 //   }
 // })
 
-// var carousel = new Carousel('.carousel-wrap', {
-//   width: '1000px',
-//   imgSrc: [
-//     images,
-//     images,
-//     images
-//   ]
-// })
+var carousel = new Carousel('.carousel-wrap', {
+  width: '1000px',
+  imgSrc: [
+    images,
+    images,
+    images
+  ]
+})
 
-new Dialog()
+console.log(carousel)
+
+// new Dialog()
