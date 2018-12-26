@@ -1,3 +1,4 @@
+import Carousel from '../common/carousel/index.js'
 const layout = require('page/common/base.css')
 const style = require('page/login/style.css')
 

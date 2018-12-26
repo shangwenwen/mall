@@ -21,15 +21,6 @@ const images = require('../../images/01.jpg')
 //   }
 // })
 
-var carousel = new Carousel('.carousel-wrap', {
-  width: '1000px',
-  imgSrc: [
-    images,
-    images,
-    images
-  ]
+var carousel = new Carousel('#carousel-01', {
+	autoplay: true
 })
-
-console.log(carousel)
-
-// new Dialog()
