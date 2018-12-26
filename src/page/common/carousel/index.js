@@ -10,10 +10,10 @@ class Carousel {
       slideType: 'default',
       duration: 300,
       autoplay: true,
-      interval: 1000,
+      interval: 3000,
       dots: true,
       dotsTrigger: 'hover',
-      arrow: 'hover',
+      arrowType: 'hover',
       index: 0
     }, options)
     // 获取轮播外层
@@ -49,6 +49,8 @@ class Carousel {
     elementItem.eq(options.index).addClass('carousel-item-this')
 
     _this._autoplay()
+    _this._arrow()
+    _this._dots()
     _this._events()
   }
 
@@ -57,7 +59,7 @@ class Carousel {
     var _this = this
     var options = this.options
 
-    if(!options.autoplay) return
+    if (!options.autoplay) return
 
     this.timer = setInterval(function() {
       _this.slide()
@@ -86,7 +88,7 @@ class Carousel {
     }
   }
 
-  slide(type, num) {
+  slide(arrowType, num) {
     var _this = this
     var isSliding = this.isSliding
     var options = this.options
@@ -94,7 +96,7 @@ class Carousel {
 
     if (_this.isSliding) return
 
-    if (type === 'sub') {
+    if (arrowType === 'sub') {
       _this._subIndex(num)
       elementItem.eq(options.index).addClass('carousel-item-prev')
 
@@ -117,23 +119,81 @@ class Carousel {
       elementItem.eq(options.index).addClass('carousel-item-this')
       isSliding = false
     }, 300)
+    
+    // 指示器焦点
+    _this.elementDots.find('li').eq(options.index).addClass('active').siblings().removeClass('active')
 
     isSliding = true
   }
 
-  _events(){
+  _events() {
     var _this = this
 
-    if(this.element.data('haveEvents')) return
+    if (this.element.data('haveEvents')) return
 
-    this.element.on('mouseover', function(){
+    this.element.on('mouseover', function() {
       clearInterval(_this.timer)
       _this.timer = null
-    }).on('mouseleave', function(){
+    }).on('mouseleave', function() {
       _this._autoplay()
     })
 
     this.element.data('haveEvents', true)
+  }
+
+  _arrow() {
+    var _this = this
+    var options = this.options
+    var element = this.element
+
+    var arrowTpl = $('<a href="javascript:" class="carousel-arrow prev" arrow-type="sub">&lt;</a><a href="javascript:" class="carousel-arrow next" arrow-type="add">&gt;</a>')
+
+    element.attr('arrow-type', options.arrowType)
+
+    if (element.find('.carousel-arrow')) {
+      element.find('.carousel-arrow').remove()
+    }
+
+    element.append(arrowTpl)
+
+    arrowTpl.on('click', function() {
+      var arrowType = $(this).attr('arrow-type')
+      _this.slide(arrowType)
+    })
+  }
+
+  _dots() {
+    var _this = this
+    var options = this.options
+    var element = this.element
+    var elementItem = this.elementItem
+    console.log(options.index)
+    var dotsTpl = _this.elementDots = $([
+      '<ul class="carousel-dots">',
+      function() {
+        var str = []
+
+        $.each(elementItem, function(index, val) {
+
+          str.push('<li' + (options.index === index ? ' class="active"' : '') + '></li>')
+        })
+
+        return str.join('')
+      }(),
+      '</ul>'
+    ].join(''))
+
+    element.append(dotsTpl)
+
+    dotsTpl.find('li').on('mouseover', function(){
+      var index = $(this).index()
+      if(index> options.index){
+        _this.slide('add')
+      }else if(index< options.index){
+        _this.slide('sub')
+      }
+    })
+
   }
 
 }
