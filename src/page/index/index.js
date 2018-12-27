@@ -1,9 +1,9 @@
+require('page/common/base.css')
+require('page/index/style.css')
 // import Dom from '../../helpers/dom'
 import Carousel from '../common/carousel/index.js'
 // import Dialog from '../common/dialog/index.js'
 
-// const layout = require('page/common/base.css')
-// const style = require('page/index/style.css')
 
 // const imags = require('images/01.jpg')
 

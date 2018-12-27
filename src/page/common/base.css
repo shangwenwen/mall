@@ -1,7 +1,12 @@
 @import './layout.css';
 
+
+* {
+    padding:0;
+  margin: 0;
+  list-style: none;
+}
 body {
-  background: $blue;
   padding-left: $paddingLeft;
 }
 

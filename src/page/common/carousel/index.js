@@ -8,8 +8,8 @@ class Carousel {
     this.options = $.extend(true, {}, {
       slideType: 'default',
       autoplay: true,
-      dots: true,
-      dotsTrigger: 'hover',
+      dots: false,
+      dotsTrigger: 'click',
       arrowType: 'hover',
       interval: 3000,
       duration: 300,
@@ -49,7 +49,7 @@ class Carousel {
     elementItem.eq(options.index).addClass('carousel-item-this')
 
     _this._autoplay()
-    _this._arrow()
+    _this._arrows()
     _this._dots()
     _this._events()
   }
@@ -66,6 +66,7 @@ class Carousel {
     }, options.interval)
   }
 
+  // 右轮播
   _addIndex(num) {
     var options = this.options
     var elementItem = this.elementItem
@@ -73,12 +74,12 @@ class Carousel {
     var num = num || 1
     options.index = options.index + num
 
-
     if (options.index >= elementItem.length) {
       options.index = 0
     }
   }
 
+  // 左轮播
   _subIndex(num) {
     var options = this.options
     var elementItem = this.elementItem
@@ -91,6 +92,7 @@ class Carousel {
     }
   }
 
+  // 轮播
   slide(arrowType, num) {
     var _this = this
     var isSliding = this.isSliding
@@ -121,7 +123,7 @@ class Carousel {
       elementItem.removeClass('carousel-item-this carousel-item-next carousel-item-prev carousel-item-left carousel-item-right')
       elementItem.eq(options.index).addClass('carousel-item-this')
       isSliding = false
-    }, 50)
+    }, 300)
 
     // 指示器焦点
     _this.elementDots.find('li').eq(options.index).addClass('active').siblings().removeClass('active')
@@ -129,6 +131,7 @@ class Carousel {
     isSliding = true
   }
 
+  // 绑定事件
   _events() {
     var _this = this
 
@@ -144,12 +147,13 @@ class Carousel {
     this.element.data('haveEvents', true)
   }
 
-  _arrow() {
+  // 初始化箭头
+  _arrows() {
     var _this = this
     var options = this.options
     var element = this.element
 
-    var arrowTpl = $('<a href="javascript:" class="carousel-arrow prev" arrow-type="sub">&lt;</a><a href="javascript:" class="carousel-arrow next" arrow-type="add">&gt;</a>')
+    var arrowHTML = $('<a href="javascript:" class="carousel-arrow prev" arrow-type="sub">&lt;</a><a href="javascript:" class="carousel-arrow next" arrow-type="add">&gt;</a>')
 
     element.attr('arrow-type', options.arrowType)
 
@@ -157,49 +161,46 @@ class Carousel {
       element.find('.carousel-arrow').remove()
     }
 
-    element.append(arrowTpl)
+    element.append(arrowHTML)
 
-    arrowTpl.on('click', function() {
+    arrowHTML.on('click', function() {
       var arrowType = $(this).attr('arrow-type')
       _this.slide(arrowType)
     })
   }
 
+  // 初始化指示器
   _dots() {
     var _this = this
     var options = this.options
     var element = this.element
     var elementItem = this.elementItem
 
-    var dotsTpl = _this.elementDots = $([
-      '<ul class="carousel-dots">',
-      function() {
-        var str = []
+    var dotsHTML = _this.elementDots = $('<ul class="carousel-dots">' + getDotsItem() + '</ul>')
 
-        $.each(elementItem, function(index, val) {
-          str.push('<li' + (options.index === index ? ' class="active"' : '') + '></li>')
-        })
+    function getDotsItem() {
+      var dotsItems = ''
 
-        return str.join('')
-      }(),
-      '</ul>'
-    ].join(''))
+      $.each(elementItem, function(index, val) {
+        dotsItems += '<li' + (options.index === index ? ' class="active"' : '') + '></li>'
+      })
 
-    element.append(dotsTpl)
+      return dotsItems
+    }
 
-    dotsTpl.find('li').on('mouseover', function() {
+    element.append(dotsHTML)
+
+    // 添加指示器事件
+    dotsHTML.find('li').on((options.dotsTrigger === 'hover' ? 'mouseover' : options.dotsTrigger), function() {
       var index = $(this).index()
-      console.log(index)
-      console.log(options.index)
+
       if (index > options.index) {
         _this.slide('add', index - options.index)
       } else if (index < options.index) {
         _this.slide('sub', options.index - index)
       }
     })
-
   }
-
 }
 
 export default Carousel
