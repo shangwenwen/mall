@@ -4,6 +4,9 @@ require('page/common/carousel/style.css')
 class Carousel {
   // 构造函数
   constructor(element, options = {}) {
+    static CLASS = {
+      CAROUSEL_ITEM_THIS: 'carousel-item-this',
+    }
     // 合并配置
     this.options = $.extend(true, {}, {
       slideType: 'default',
@@ -21,10 +24,10 @@ class Carousel {
     // 获取轮播元素
     this.elementItem = $(element).find('.carousel-container').children()
     // 加载轮播
-    this._init()
+    this.init()
   }
 
-  _init() {
+  init() {
     var _this = this
     var options = this.options
     var element = this.element
