@@ -68,6 +68,7 @@
     background: rgba(0, 0, 0, .35);
     border-radius: 50%;
     text-align: center;
+    color: #fff;
     line-height: 36px;
     text-decoration: none;
     opacity: 0;
@@ -118,6 +119,18 @@
       &.next {
         right: 20px;
       }
+    }
+  }
+
+  &[arrow-type=always] {
+    .carousel-arrow {
+      opacity: 1;
+    }
+  }
+
+  &[arrow-type=none]:hover {
+    .carousel-arrow {
+      display: none;
     }
   }
 }

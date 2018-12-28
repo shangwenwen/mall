@@ -2,18 +2,24 @@ require('page/common/carousel/style.css')
 
 // 轮播
 class Carousel {
+  // 定义静态属性
+  static CLASS = {
+    CAROUSEL_ITEM_THIS: 'carousel-item-this',
+    CAROUSEL_ITEM_PREV: 'carousel-item-prev',
+    CAROUSEL_ITEM_NEXT: 'carousel-item-next',
+    CAROUSEL_ITEM_LEFT: 'carousel-item-left',
+    CAROUSEL_ITEM_RIGHT: 'carousel-item-right'
+  }
+
   // 构造函数
   constructor(element, options = {}) {
-    static CLASS = {
-      CAROUSEL_ITEM_THIS: 'carousel-item-this',
-    }
     // 合并配置
     this.options = $.extend(true, {}, {
-      slideType: 'default',
+      carouselType: 'default',
       autoplay: true,
       dots: false,
-      dotsTrigger: 'click',
-      arrowType: 'hover',
+      dotsTrigger: 'click', // CLICK/HOVER
+      arrowType: 'hover', // HOVER/ALWAYS/NONE
       interval: 3000,
       duration: 300,
       index: 0
@@ -47,9 +53,9 @@ class Carousel {
       options.interval = 800
     }
 
-    element.attr('slide-type', options.slideType)
+    element.attr('carousel-type', options.carouselType)
 
-    elementItem.eq(options.index).addClass('carousel-item-this')
+    elementItem.eq(options.index).addClass(Carousel.CLASS.CAROUSEL_ITEM_THIS)
 
     _this._autoplay()
     _this._arrows()
@@ -65,12 +71,12 @@ class Carousel {
     if (!options.autoplay) return
 
     this.timer = setInterval(function() {
-      _this.slide()
+      _this.goto()
     }, options.interval)
   }
 
   // 右轮播
-  _addIndex(num) {
+  next(num) {
     var options = this.options
     var elementItem = this.elementItem
 
@@ -80,23 +86,31 @@ class Carousel {
     if (options.index >= elementItem.length) {
       options.index = 0
     }
+
+    return options.index
   }
 
   // 左轮播
-  _subIndex(num) {
+  prev(num) {
+
     var options = this.options
     var elementItem = this.elementItem
+    console.log(options.index)
 
     var num = num || 1
     options.index = options.index - num
 
+    console.log(options.index)
+
     if (options.index < 0) {
       options.index = elementItem.length - 1
     }
+
+    return options.index
   }
 
   // 轮播
-  slide(arrowType, num) {
+  goto(arrowType, num) {
     var _this = this
     var isSliding = this.isSliding
     var options = this.options
@@ -105,26 +119,26 @@ class Carousel {
     if (_this.isSliding) return
 
     if (arrowType === 'sub') {
-      _this._subIndex(num)
-      elementItem.eq(options.index).addClass('carousel-item-prev')
+      _this.prev(num)
+      elementItem.eq(options.index).addClass(Carousel.CLASS.CAROUSEL_ITEM_PREV)
 
       setTimeout(function() {
-        elementItem.eq(options.index + 1).addClass('carousel-item-right')
-        elementItem.eq(options.index).addClass('carousel-item-right')
+        elementItem.eq(options.index + 1).addClass(Carousel.CLASS.CAROUSEL_ITEM_RIGHT)
+        elementItem.eq(options.index).addClass(Carousel.CLASS.CAROUSEL_ITEM_RIGHT)
       }, 50)
     } else {
-      _this._addIndex(num)
-      elementItem.eq(options.index).addClass('carousel-item-next')
+      _this.next(num)
+      elementItem.eq(options.index).addClass(Carousel.CLASS.CAROUSEL_ITEM_NEXT)
 
       setTimeout(function() {
-        elementItem.eq(options.index - 1).addClass('carousel-item-left')
-        elementItem.eq(options.index).addClass('carousel-item-left')
+        elementItem.eq(options.index - 1).addClass(Carousel.CLASS.CAROUSEL_ITEM_LEFT)
+        elementItem.eq(options.index).addClass(Carousel.CLASS.CAROUSEL_ITEM_LEFT)
       }, 50)
     }
 
     setTimeout(function() {
-      elementItem.removeClass('carousel-item-this carousel-item-next carousel-item-prev carousel-item-left carousel-item-right')
-      elementItem.eq(options.index).addClass('carousel-item-this')
+      elementItem.removeClass(Carousel.CLASS.CAROUSEL_ITEM_THIS + ' ' + Carousel.CLASS.CAROUSEL_ITEM_NEXT + ' ' + Carousel.CLASS.CAROUSEL_ITEM_PREV + ' ' + Carousel.CLASS.CAROUSEL_ITEM_LEFT + ' ' + Carousel.CLASS.CAROUSEL_ITEM_RIGHT)
+      elementItem.eq(options.index).addClass(Carousel.CLASS.CAROUSEL_ITEM_THIS)
       isSliding = false
     }, 300)
 
@@ -168,7 +182,7 @@ class Carousel {
 
     arrowHTML.on('click', function() {
       var arrowType = $(this).attr('arrow-type')
-      _this.slide(arrowType)
+      _this.goto(arrowType)
     })
   }
 
@@ -198,9 +212,9 @@ class Carousel {
       var index = $(this).index()
 
       if (index > options.index) {
-        _this.slide('add', index - options.index)
+        _this.goto('add', index - options.index)
       } else if (index < options.index) {
-        _this.slide('sub', options.index - index)
+        _this.goto('sub', options.index - index)
       }
     })
   }

@@ -21,6 +21,11 @@ const images = require('../../images/01.jpg')
 //   }
 // })
 
-var carousel = new Carousel('#carousel-01', {
-	autoplay: true
+var carousel = new Carousel('.carousel-wrap', {
+	autoplay: true,
+	arrowType: 'always',
+	dotsTrigger: 'hover'
 })
+
+console.log(carousel.next())
+console.log(carousel.prev())
